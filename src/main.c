@@ -23,12 +23,12 @@ void DrawGame(){
 
     //Draw ship
     const Vector2 lines[] = {
-      (Vector2){windowWidth / 2, windowHeight / 2 - 25},
-      (Vector2){windowWidth / 2 + 20, windowHeight / 2 + 20},
-      (Vector2){windowWidth / 2 + 5, windowHeight / 2 + 10},
-      (Vector2){windowWidth / 2 - 5, windowHeight / 2 + 10},
-      (Vector2){windowWidth / 2 - 20, windowHeight / 2 + 20},
-      (Vector2){windowWidth / 2, windowHeight / 2 - 25}
+      (Vector2){ship.position.x, ship.position.y - 25},
+      (Vector2){ship.position.x + 20, ship.position.y + 20},
+      (Vector2){ship.position.x + 5, ship.position.y + 10},
+      (Vector2){ship.position.x - 5, ship.position.y + 10},
+      (Vector2){ship.position.x - 20, ship.position.y + 20},
+      (Vector2){ship.position.x, ship.position.y - 25}
     };
 
     DrawLineStrip(lines, 6, WHITE);
