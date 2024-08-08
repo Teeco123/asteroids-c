@@ -1,9 +1,11 @@
 #include <stdio.h>
 #include <raylib.h>
+#include <math.h>
 
 typedef struct Ship{
   Vector2 position;
-  float rotation;
+  Vector2 speed;
+  int rotation;
   float acceleration;
 } Ship;
 
@@ -15,6 +17,7 @@ const int windowHeight = 720;
 
 void StartGame(){
   ship.position = (Vector2){windowWidth/2,windowHeight/2};
+  ship.speed = (Vector2){0,0};
   ship.rotation = 0;
   ship.acceleration = 0;
 };
@@ -23,20 +26,26 @@ void UpdateGame(){
 
   //Ship rotation
   if(IsKeyDown(KEY_RIGHT)){
-    ship.rotation += 0.04f;
+    ship.rotation += 5;
   }
   if(IsKeyDown(KEY_LEFT)){
-    ship.rotation -= 0.04f;
+    ship.rotation -= 5;
   }
+
+  //Ship speed
+  ship.speed.x = cos(ship.rotation * (2 * 3.14));
+  ship.speed.y = sin(ship.rotation * (2 * 3.14));
 
   //ship acceleration
   if(IsKeyDown(KEY_UP)){
-    ship.acceleration += 0.02f;
-  }else if(ship.acceleration > 0 && !IsKeyDown(KEY_UP)){
+    if(ship.acceleration < 1.5) ship.acceleration += 0.02f;
+  }else if(ship.acceleration > 0.01f && !IsKeyDown(KEY_UP)){
     ship.acceleration -= 0.01f;
   }
 
-  ship.position.y -= ship.acceleration;
+  ship.position.x += (ship.speed.x * ship.acceleration);
+  ship.position.y -= (ship.speed.y * ship.acceleration);
+  
 }
 
 void DrawGame(){
@@ -56,6 +65,7 @@ void DrawGame(){
       (Vector2){ship.position.x, ship.position.y - 25}
     };
     DrawLineStrip(lines, 6, WHITE);
+    DrawPixel(ship.position.x, ship.position.y, RED);
 
   EndDrawing();
 }
