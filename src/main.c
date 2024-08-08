@@ -8,8 +8,8 @@ typedef struct Ship{
 static Ship ship = { 0 };
 
 //Screen size
-const int windowWidth = 800;
-const int windowHeight = 450;
+const int windowWidth = 1280;
+const int windowHeight = 720;
 
 void StartGame(){
   ship.position = (Vector2){windowWidth/2,windowHeight/2};
@@ -22,7 +22,16 @@ void DrawGame(){
     ClearBackground(BLACK);
 
     //Draw ship
-    DrawPolyLines(ship.position, 4, 10, 45, WHITE);
+    const Vector2 lines[] = {
+      (Vector2){windowWidth / 2, windowHeight / 2 - 25},
+      (Vector2){windowWidth / 2 + 20, windowHeight / 2 + 20},
+      (Vector2){windowWidth / 2 + 5, windowHeight / 2 + 10},
+      (Vector2){windowWidth / 2 - 5, windowHeight / 2 + 10},
+      (Vector2){windowWidth / 2 - 20, windowHeight / 2 + 20},
+      (Vector2){windowWidth / 2, windowHeight / 2 - 25}
+    };
+
+    DrawLineStrip(lines, 6, WHITE);
 
   EndDrawing();
 }
