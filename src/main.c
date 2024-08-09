@@ -72,8 +72,8 @@ void DrawGame() {
   ClearBackground(BLACK);
 
   // Draw ship
-  Vector2 cords[] = {{0, -25}, {20, 20},  {5, 10},
-                     {-5, 10}, {-20, 20}, {0, -25}};
+  Vector2 cords[] = {{0, -25},  {20, 20},  {10, 10},
+                     {-10, 10}, {-20, 20}, {0, -25}};
 
   Vector2 lines[] = {{0}, {0}, {0}, {0}, {0}, {0}};
 
@@ -93,6 +93,29 @@ void DrawGame() {
 
   DrawLineStrip(lines, 6, WHITE);
   DrawPixel(ship.position.x, ship.position.y, RED);
+
+  // Draw Thruster
+  if (IsKeyDown(KEY_UP)) {
+    Vector2 jetCords[] = {{10, 10}, {0, 30}, {-10, 10}};
+
+    Vector2 jetLines[] = {{0}, {0}, {0}};
+
+    for (int i = 0; i < sizeof(jetLines) / sizeof(jetLines[0]); ++i) {
+      jetLines[i].x = ((ship.position.x + jetCords[i].x) - ship.position.x) *
+                          cos(ship.rotation * twoPI) -
+                      ((ship.position.y + jetCords[i].y) - ship.position.y) *
+                          sin(ship.rotation * twoPI) +
+                      ship.position.x;
+
+      jetLines[i].y = ((ship.position.x + jetCords[i].x) - ship.position.x) *
+                          sin(ship.rotation * twoPI) +
+                      ((ship.position.y + jetCords[i].y) - ship.position.y) *
+                          cos(ship.rotation * twoPI) +
+                      ship.position.y;
+    };
+
+    DrawLineStrip(jetLines, 3, WHITE);
+  }
 
   EndDrawing();
 }
