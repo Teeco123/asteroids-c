@@ -49,6 +49,17 @@ void UpdateGame() {
   // Calculate position of ship
   ship.position.x += (ship.speed.x * ship.acceleration);
   ship.position.y -= (ship.speed.y * ship.acceleration);
+
+  if (ship.position.x < 0) {
+    ship.position.x = windowWidth;
+  } else if (ship.position.x > windowWidth) {
+    ship.position.x = 0;
+  }
+  if (ship.position.y < 0) {
+    ship.position.y = windowHeight;
+  } else if (ship.position.y > windowHeight) {
+    ship.position.y = 0;
+  }
 }
 
 void DrawGame() {
