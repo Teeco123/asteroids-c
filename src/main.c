@@ -9,6 +9,8 @@ typedef struct Ship{
   float acceleration;
 } Ship;
 
+const float twoPI = (2 * 3.14);
+
 static Ship ship = { 0 };
 
 //Screen size
@@ -26,23 +28,24 @@ void UpdateGame(){
 
   //Ship rotation
   if(IsKeyDown(KEY_RIGHT)){
-    ship.rotation += 5;
+    ship.rotation -= 5;
   }
   if(IsKeyDown(KEY_LEFT)){
-    ship.rotation -= 5;
+    ship.rotation += 5;
   }
 
   //Ship speed
-  ship.speed.x = cos(ship.rotation * (2 * 3.14));
-  ship.speed.y = sin(ship.rotation * (2 * 3.14));
+  ship.speed.x = sin(ship.rotation * (2 * 3.14));
+  ship.speed.y = cos(ship.rotation * (2 * 3.14));
 
-  //ship acceleration
+  //Ship acceleration
   if(IsKeyDown(KEY_UP)){
     if(ship.acceleration < 1.5) ship.acceleration += 0.02f;
   }else if(ship.acceleration > 0.01f && !IsKeyDown(KEY_UP)){
     ship.acceleration -= 0.01f;
   }
-
+  
+  //Calculate position of ship
   ship.position.x += (ship.speed.x * ship.acceleration);
   ship.position.y -= (ship.speed.y * ship.acceleration);
   
@@ -57,12 +60,30 @@ void DrawGame(){
 
     //Draw ship
     const Vector2 lines[] = {
-      (Vector2){ship.position.x, ship.position.y - 25},
-      (Vector2){ship.position.x + 20, ship.position.y + 20},
-      (Vector2){ship.position.x + 5, ship.position.y + 10},
-      (Vector2){ship.position.x - 5, ship.position.y + 10},
-      (Vector2){ship.position.x - 20, ship.position.y + 20},
-      (Vector2){ship.position.x, ship.position.y - 25}
+      (Vector2){
+       (ship.position.x - ship.position.x) * cos(ship.rotation * twoPI) - ((ship.position.y - 25) - ship.position.y) * sin(ship.rotation * twoPI) + ship.position.x,
+       (ship.position.x - ship.position.x) * sin(ship.rotation * twoPI) + ((ship.position.y - 25) - ship.position.y) * cos(ship.rotation * twoPI) + ship.position.y
+      },
+      (Vector2){
+       ((ship.position.x + 20) - ship.position.x) * cos(ship.rotation * twoPI) - ((ship.position.y + 20) - ship.position.y) * sin(ship.rotation * twoPI) + ship.position.x,
+       ((ship.position.x + 20) - ship.position.x) * sin(ship.rotation * twoPI) + ((ship.position.y + 20) - ship.position.y) * cos(ship.rotation * twoPI) + ship.position.y
+      },
+      (Vector2){
+       ((ship.position.x + 5) - ship.position.x) * cos(ship.rotation * twoPI) - ((ship.position.y + 10) - ship.position.y) * sin(ship.rotation * twoPI) + ship.position.x,
+       ((ship.position.x + 5) - ship.position.x) * sin(ship.rotation * twoPI) + ((ship.position.y + 10) - ship.position.y) * cos(ship.rotation * twoPI) + ship.position.y
+      },
+      (Vector2){
+       ((ship.position.x - 5) - ship.position.x) * cos(ship.rotation * twoPI) - ((ship.position.y + 10) - ship.position.y) * sin(ship.rotation * twoPI) + ship.position.x,
+       ((ship.position.x - 5) - ship.position.x) * sin(ship.rotation * twoPI) + ((ship.position.y + 10) - ship.position.y) * cos(ship.rotation * twoPI) + ship.position.y
+      },
+      (Vector2){
+       ((ship.position.x - 20) - ship.position.x) * cos(ship.rotation * twoPI) - ((ship.position.y + 20) - ship.position.y) * sin(ship.rotation * twoPI) + ship.position.x,
+       ((ship.position.x - 20) - ship.position.x) * sin(ship.rotation * twoPI) + ((ship.position.y + 20) - ship.position.y) * cos(ship.rotation * twoPI) + ship.position.y
+      },
+      (Vector2){
+       (ship.position.x - ship.position.x) * cos(ship.rotation * twoPI) - ((ship.position.y - 25) - ship.position.y) * sin(ship.rotation * twoPI) + ship.position.x,
+       (ship.position.x - ship.position.x) * sin(ship.rotation * twoPI) + ((ship.position.y - 25) - ship.position.y) * cos(ship.rotation * twoPI) + ship.position.y
+      }
     };
     DrawLineStrip(lines, 6, WHITE);
     DrawPixel(ship.position.x, ship.position.y, RED);
