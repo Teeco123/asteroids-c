@@ -40,10 +40,12 @@ void UpdateGame() {
 
   // Ship acceleration
   if (IsKeyDown(KEY_UP)) {
-    if (ship.acceleration < 1.5)
+    if (ship.acceleration < 10)
       ship.acceleration += 0.02f;
-  } else if (ship.acceleration > 0.01f && !IsKeyDown(KEY_UP)) {
+  } else if (ship.acceleration > 0 && !IsKeyDown(KEY_UP)) {
     ship.acceleration -= 0.01f;
+  } else if (ship.acceleration < 0) {
+    ship.acceleration = 0;
   }
 
   // Calculate position of ship
