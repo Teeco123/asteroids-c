@@ -1,8 +1,8 @@
-#include <stdio.h>
-#include <raylib.h>
 #include <math.h>
+#include <raylib.h>
+#include <stdio.h>
 
-typedef struct Ship{
+typedef struct Ship {
   Vector2 position;
   Vector2 speed;
   int rotation;
@@ -11,99 +11,91 @@ typedef struct Ship{
 
 const float twoPI = (2 * 3.14);
 
-static Ship ship = { 0 };
+static Ship ship = {0};
 
-//Screen size
+// Screen size
 const int windowWidth = 1280;
 const int windowHeight = 720;
 
-void StartGame(){
-  ship.position = (Vector2){windowWidth/2,windowHeight/2};
-  ship.speed = (Vector2){0,0};
+void StartGame() {
+  ship.position = (Vector2){windowWidth / 2, windowHeight / 2};
+  ship.speed = (Vector2){0, 0};
   ship.rotation = 0;
   ship.acceleration = 0;
 };
 
-void UpdateGame(){
+void UpdateGame() {
 
-  //Ship rotation
-  if(IsKeyDown(KEY_RIGHT)){
+  // Ship rotation
+  if (IsKeyDown(KEY_RIGHT)) {
     ship.rotation -= 5;
   }
-  if(IsKeyDown(KEY_LEFT)){
+  if (IsKeyDown(KEY_LEFT)) {
     ship.rotation += 5;
   }
 
-  //Ship speed
+  // Ship speed
   ship.speed.x = sin(ship.rotation * (2 * 3.14));
   ship.speed.y = cos(ship.rotation * (2 * 3.14));
 
-  //Ship acceleration
-  if(IsKeyDown(KEY_UP)){
-    if(ship.acceleration < 1.5) ship.acceleration += 0.02f;
-  }else if(ship.acceleration > 0.01f && !IsKeyDown(KEY_UP)){
+  // Ship acceleration
+  if (IsKeyDown(KEY_UP)) {
+    if (ship.acceleration < 1.5)
+      ship.acceleration += 0.02f;
+  } else if (ship.acceleration > 0.01f && !IsKeyDown(KEY_UP)) {
     ship.acceleration -= 0.01f;
   }
-  
-  //Calculate position of ship
+
+  // Calculate position of ship
   ship.position.x += (ship.speed.x * ship.acceleration);
   ship.position.y -= (ship.speed.y * ship.acceleration);
-  
 }
 
-void DrawGame(){
+void DrawGame() {
 
   BeginDrawing();
-    
-    //Background color
-    ClearBackground(BLACK);
 
-    //Draw ship
-    const Vector2 lines[] = {
-      (Vector2){
-       (ship.position.x - ship.position.x) * cos(ship.rotation * twoPI) - ((ship.position.y - 25) - ship.position.y) * sin(ship.rotation * twoPI) + ship.position.x,
-       (ship.position.x - ship.position.x) * sin(ship.rotation * twoPI) + ((ship.position.y - 25) - ship.position.y) * cos(ship.rotation * twoPI) + ship.position.y
-      },
-      (Vector2){
-       ((ship.position.x + 20) - ship.position.x) * cos(ship.rotation * twoPI) - ((ship.position.y + 20) - ship.position.y) * sin(ship.rotation * twoPI) + ship.position.x,
-       ((ship.position.x + 20) - ship.position.x) * sin(ship.rotation * twoPI) + ((ship.position.y + 20) - ship.position.y) * cos(ship.rotation * twoPI) + ship.position.y
-      },
-      (Vector2){
-       ((ship.position.x + 5) - ship.position.x) * cos(ship.rotation * twoPI) - ((ship.position.y + 10) - ship.position.y) * sin(ship.rotation * twoPI) + ship.position.x,
-       ((ship.position.x + 5) - ship.position.x) * sin(ship.rotation * twoPI) + ((ship.position.y + 10) - ship.position.y) * cos(ship.rotation * twoPI) + ship.position.y
-      },
-      (Vector2){
-       ((ship.position.x - 5) - ship.position.x) * cos(ship.rotation * twoPI) - ((ship.position.y + 10) - ship.position.y) * sin(ship.rotation * twoPI) + ship.position.x,
-       ((ship.position.x - 5) - ship.position.x) * sin(ship.rotation * twoPI) + ((ship.position.y + 10) - ship.position.y) * cos(ship.rotation * twoPI) + ship.position.y
-      },
-      (Vector2){
-       ((ship.position.x - 20) - ship.position.x) * cos(ship.rotation * twoPI) - ((ship.position.y + 20) - ship.position.y) * sin(ship.rotation * twoPI) + ship.position.x,
-       ((ship.position.x - 20) - ship.position.x) * sin(ship.rotation * twoPI) + ((ship.position.y + 20) - ship.position.y) * cos(ship.rotation * twoPI) + ship.position.y
-      },
-      (Vector2){
-       (ship.position.x - ship.position.x) * cos(ship.rotation * twoPI) - ((ship.position.y - 25) - ship.position.y) * sin(ship.rotation * twoPI) + ship.position.x,
-       (ship.position.x - ship.position.x) * sin(ship.rotation * twoPI) + ((ship.position.y - 25) - ship.position.y) * cos(ship.rotation * twoPI) + ship.position.y
-      }
-    };
-    DrawLineStrip(lines, 6, WHITE);
-    DrawPixel(ship.position.x, ship.position.y, RED);
+  // Background color
+  ClearBackground(BLACK);
+
+  // Draw ship
+  Vector2 cords[] = {{0, -25}, {20, 20},  {5, 10},
+                     {-5, 10}, {-20, 20}, {0, -25}};
+
+  Vector2 lines[] = {{0}, {0}, {0}, {0}, {0}, {0}};
+
+  for (int i = 0; i < sizeof(lines) / sizeof(lines[0]); ++i) {
+    lines[i].x = ((ship.position.x + cords[i].x) - ship.position.x) *
+                     cos(ship.rotation * twoPI) -
+                 ((ship.position.y + cords[i].y) - ship.position.y) *
+                     sin(ship.rotation * twoPI) +
+                 ship.position.x;
+
+    lines[i].y = ((ship.position.x + cords[i].x) - ship.position.x) *
+                     sin(ship.rotation * twoPI) +
+                 ((ship.position.y + cords[i].y) - ship.position.y) *
+                     cos(ship.rotation * twoPI) +
+                 ship.position.y;
+  }
+
+  DrawLineStrip(lines, 6, WHITE);
+  DrawPixel(ship.position.x, ship.position.y, RED);
 
   EndDrawing();
 }
 
-int main(){
+int main() {
   InitWindow(windowWidth, windowHeight, "Asteroids");
   SetTargetFPS(160);
-  
+
   StartGame();
 
-  while(!WindowShouldClose()){
+  while (!WindowShouldClose()) {
     DrawGame();
     UpdateGame();
   }
 
   CloseWindow();
-  
+
   return 0;
 }
-
