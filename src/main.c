@@ -15,7 +15,7 @@ typedef struct Ship {
 
 typedef struct Meteor {
   Vector2 position;
-  Vector2 cords[5];
+  Vector2 cords[9];
   Vector2 speed;
   int rotation;
 } Meteor;
@@ -40,12 +40,38 @@ void StartGame() {
   for (int i = 0; i < MAX_SMALL_METEORS; i++) {
     smallMeteor[i].position.x = GetRandomValue(0, windowWidth);
     smallMeteor[i].position.y = GetRandomValue(0, windowHeight);
-    for (int cord = 0; cord < 5; cord++) {
-      smallMeteor[i].cords[cord].x = GetRandomValue(0, 30);
-      smallMeteor[i].cords[cord].y = GetRandomValue(0, 30);
-    };
+    
+    smallMeteor[i].cords[0].x = GetRandomValue(-15, -15);
+    smallMeteor[i].cords[0].y = GetRandomValue(15, 15);
+
+    smallMeteor[i].cords[1].x = GetRandomValue(0, 0);
+    smallMeteor[i].cords[1].y = GetRandomValue(5, 15);
+
+    smallMeteor[i].cords[2].x = GetRandomValue(5, 15);
+    smallMeteor[i].cords[2].y = GetRandomValue(5, 15);
+
+    smallMeteor[i].cords[3].x = GetRandomValue(5, 15);
+    smallMeteor[i].cords[3].y = GetRandomValue(0, 0);
+
+    smallMeteor[i].cords[4].x = GetRandomValue(5, 15);
+    smallMeteor[i].cords[4].y = GetRandomValue(-15, -5);
+
+    smallMeteor[i].cords[5].x = GetRandomValue(0, 0);
+    smallMeteor[i].cords[5].y = GetRandomValue(-15, -5);
+
+    smallMeteor[i].cords[6].x = GetRandomValue(-15, -5);
+    smallMeteor[i].cords[6].y = GetRandomValue(-15, -5);
+
+    smallMeteor[i].cords[7].x = GetRandomValue(-15, -5);
+    smallMeteor[i].cords[7].y = GetRandomValue(0, 0);
+
+    smallMeteor[i].cords[8].x = GetRandomValue(-15, -15);
+    smallMeteor[i].cords[8].y = GetRandomValue(15, 15);
+
+
   };
-};
+}
+
 void UpdateGame() {
 
   // Ship rotation
@@ -115,7 +141,6 @@ void DrawGame() {
   }
 
   DrawLineStrip(lines, 6, WHITE);
-  DrawPixel(ship.position.x, ship.position.y, RED);
 
   // Draw Thruster
   if (IsKeyDown(KEY_UP)) {
@@ -142,15 +167,15 @@ void DrawGame() {
 
   // Drawing Meteors
   for (int m = 0; m < MAX_SMALL_METEORS; m++) {
-    Vector2 meteorLines[] = {{0}, {0}, {0}, {0}, {0}};
+    Vector2 meteorLines[] = {{0}, {0}, {0}, {0}, {0}, {0}, {0}, {0}, {0}};
 
     for (int l = 0; l < sizeof(meteorLines) / sizeof(meteorLines[0]); l++) {
 
       meteorLines[l].x = smallMeteor[m].position.x + smallMeteor[m].cords[l].x;
       meteorLines[l].y = smallMeteor[m].position.y + smallMeteor[m].cords[l].y;
     }
-
-    DrawLineStrip(meteorLines, 5, WHITE);
+  
+    DrawLineStrip(meteorLines,9, WHITE);
   }
 
   EndDrawing();
