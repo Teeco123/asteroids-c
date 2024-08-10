@@ -53,9 +53,11 @@ void StartGame() {
       {GetRandomValue(-15,-15),GetRandomValue(15,15)},
     };
     
-    for(int c = 0; c < sizeof(cords) / sizeof(cords[0]); c++)
-    
+    for(int c = 0; c < sizeof(cords) / sizeof(cords[0]); c++){
       smallMeteor[i].cords[c] = cords[c];
+    };
+    
+    smallMeteor[i].rotation = GetRandomValue(-1000, 1000);
   };
 }
 
@@ -97,6 +99,15 @@ void UpdateGame() {
     ship.position.y = windowHeight;
   } else if (ship.position.y > windowHeight) {
     ship.position.y = 0;
+  }
+
+  //Moving meteors to random direction
+  for(int i = 0; i < MAX_SMALL_METEORS; i++){
+    smallMeteor[i].speed.x = sin(smallMeteor[i].rotation * (2 * 3.14));
+    smallMeteor[i].speed.y = cos(smallMeteor[i].rotation * (2 * 3.14));
+
+    smallMeteor[i].position.x += (smallMeteor[i].speed.x * 1);
+    smallMeteor[i].position.y -= (smallMeteor[i].speed.y * 1);
   }
 }
 
