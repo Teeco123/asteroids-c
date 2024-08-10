@@ -2,6 +2,10 @@
 #include <raylib.h>
 #include <stdio.h>
 
+#define MAX_SMALL_METEORS 15
+#define MAX_MEDIUM_METEORS 10
+#define MAX_BIG_METEORS 5
+
 typedef struct Ship {
   Vector2 position;
   Vector2 speed;
@@ -9,21 +13,39 @@ typedef struct Ship {
   float acceleration;
 } Ship;
 
+typedef struct Meteor {
+  Vector2 position;
+  Vector2 cords[5];
+  Vector2 speed;
+  int rotation;
+} Meteor;
+
 const float twoPI = (2 * 3.14);
 
 static Ship ship = {0};
+static Meteor smallMeteor[MAX_SMALL_METEORS] = {0};
 
 // Screen size
 const int windowWidth = 1280;
 const int windowHeight = 720;
 
 void StartGame() {
+  // Starting Values of ship
   ship.position = (Vector2){windowWidth / 2, windowHeight / 2};
   ship.speed = (Vector2){0, 0};
   ship.rotation = 0;
   ship.acceleration = 0;
-};
 
+  // Randomizing position and layout of meteors
+  for (int i = 0; i < MAX_SMALL_METEORS; i++) {
+    smallMeteor[i].position.x = GetRandomValue(0, windowWidth);
+    smallMeteor[i].position.y = GetRandomValue(0, windowHeight);
+    for (int cord = 0; cord < 5; cord++) {
+      smallMeteor[i].cords[cord].x = GetRandomValue(0, 30);
+      smallMeteor[i].cords[cord].y = GetRandomValue(0, 30);
+    };
+  };
+};
 void UpdateGame() {
 
   // Ship rotation
@@ -52,6 +74,7 @@ void UpdateGame() {
   ship.position.x += (ship.speed.x * ship.acceleration);
   ship.position.y -= (ship.speed.y * ship.acceleration);
 
+  // Handle moving through screen
   if (ship.position.x < 0) {
     ship.position.x = windowWidth;
   } else if (ship.position.x > windowWidth) {
@@ -115,6 +138,19 @@ void DrawGame() {
     };
 
     DrawLineStrip(jetLines, 3, WHITE);
+  }
+
+  // Drawing Meteors
+  for (int m = 0; m < MAX_SMALL_METEORS; m++) {
+    Vector2 meteorLines[] = {{0}, {0}, {0}, {0}, {0}};
+
+    for (int l = 0; l < sizeof(meteorLines) / sizeof(meteorLines[0]); l++) {
+
+      meteorLines[l].x = smallMeteor[m].position.x + smallMeteor[m].cords[l].x;
+      meteorLines[l].y = smallMeteor[m].position.y + smallMeteor[m].cords[l].y;
+    }
+
+    DrawLineStrip(meteorLines, 5, WHITE);
   }
 
   EndDrawing();
