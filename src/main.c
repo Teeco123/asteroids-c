@@ -41,34 +41,21 @@ void StartGame() {
     smallMeteor[i].position.x = GetRandomValue(0, windowWidth);
     smallMeteor[i].position.y = GetRandomValue(0, windowHeight);
     
-    smallMeteor[i].cords[0].x = GetRandomValue(-15, -15);
-    smallMeteor[i].cords[0].y = GetRandomValue(15, 15);
-
-    smallMeteor[i].cords[1].x = GetRandomValue(0, 0);
-    smallMeteor[i].cords[1].y = GetRandomValue(5, 15);
-
-    smallMeteor[i].cords[2].x = GetRandomValue(5, 15);
-    smallMeteor[i].cords[2].y = GetRandomValue(5, 15);
-
-    smallMeteor[i].cords[3].x = GetRandomValue(5, 15);
-    smallMeteor[i].cords[3].y = GetRandomValue(0, 0);
-
-    smallMeteor[i].cords[4].x = GetRandomValue(5, 15);
-    smallMeteor[i].cords[4].y = GetRandomValue(-15, -5);
-
-    smallMeteor[i].cords[5].x = GetRandomValue(0, 0);
-    smallMeteor[i].cords[5].y = GetRandomValue(-15, -5);
-
-    smallMeteor[i].cords[6].x = GetRandomValue(-15, -5);
-    smallMeteor[i].cords[6].y = GetRandomValue(-15, -5);
-
-    smallMeteor[i].cords[7].x = GetRandomValue(-15, -5);
-    smallMeteor[i].cords[7].y = GetRandomValue(0, 0);
-
-    smallMeteor[i].cords[8].x = GetRandomValue(-15, -15);
-    smallMeteor[i].cords[8].y = GetRandomValue(15, 15);
-
-
+    Vector2 cords[] ={
+      {GetRandomValue(-15,-15),GetRandomValue(15,15)},
+      {GetRandomValue(0,0),GetRandomValue(5,15)},
+      {GetRandomValue(5,15),GetRandomValue(5,15)},
+      {GetRandomValue(5,15),GetRandomValue(0,0)},
+      {GetRandomValue(5,15),GetRandomValue(-15,-5)},
+      {GetRandomValue(0,0), GetRandomValue(-15,-5)},
+      {GetRandomValue(-15,-5),GetRandomValue(-15,-5)},
+      {GetRandomValue(-15,-5),GetRandomValue(0,0)},
+      {GetRandomValue(-15,-15),GetRandomValue(15,15)},
+    };
+    
+    for(int c = 0; c < sizeof(cords) / sizeof(cords[0]); c++)
+    
+      smallMeteor[i].cords[c] = cords[c];
   };
 }
 
