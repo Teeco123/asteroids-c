@@ -310,6 +310,8 @@ void DrawGame() {
     for (int sM = 0; sM < MAX_SMALL_METEORS; sM++) {
       DrawLineStrip(smallMeteor[sM].lines, 9, WHITE);
     }
+  } else {
+    DrawText("PRESS ENTER TO START NEW GAME!", 470, windowHeight / 2, 20, RED);
   }
   EndDrawing();
 }
