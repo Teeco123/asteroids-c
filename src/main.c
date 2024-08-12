@@ -2,7 +2,7 @@
 #include <raylib.h>
 #include <stdio.h>
 
-#define MAX_SMALL_METEORS 15
+#define MAX_SMALL_METEORS 20
 #define MAX_MEDIUM_METEORS 10
 #define MAX_BIG_METEORS 5
 
