@@ -40,23 +40,23 @@ void StartGame() {
   for (int i = 0; i < MAX_SMALL_METEORS; i++) {
     smallMeteor[i].position.x = GetRandomValue(0, windowWidth);
     smallMeteor[i].position.y = GetRandomValue(0, windowHeight);
-    
-    Vector2 cords[] ={
-      {GetRandomValue(-15,-15),GetRandomValue(15,15)},
-      {GetRandomValue(0,0),GetRandomValue(5,15)},
-      {GetRandomValue(5,15),GetRandomValue(5,15)},
-      {GetRandomValue(5,15),GetRandomValue(0,0)},
-      {GetRandomValue(5,15),GetRandomValue(-15,-5)},
-      {GetRandomValue(0,0), GetRandomValue(-15,-5)},
-      {GetRandomValue(-15,-5),GetRandomValue(-15,-5)},
-      {GetRandomValue(-15,-5),GetRandomValue(0,0)},
-      {GetRandomValue(-15,-15),GetRandomValue(15,15)},
+
+    Vector2 cords[] = {
+        {GetRandomValue(-15, -15), GetRandomValue(15, 15)},
+        {GetRandomValue(0, 0), GetRandomValue(5, 15)},
+        {GetRandomValue(5, 15), GetRandomValue(5, 15)},
+        {GetRandomValue(5, 15), GetRandomValue(0, 0)},
+        {GetRandomValue(5, 15), GetRandomValue(-15, -5)},
+        {GetRandomValue(0, 0), GetRandomValue(-15, -5)},
+        {GetRandomValue(-15, -5), GetRandomValue(-15, -5)},
+        {GetRandomValue(-15, -5), GetRandomValue(0, 0)},
+        {GetRandomValue(-15, -15), GetRandomValue(15, 15)},
     };
-    
-    for(int c = 0; c < sizeof(cords) / sizeof(cords[0]); c++){
+
+    for (int c = 0; c < sizeof(cords) / sizeof(cords[0]); c++) {
       smallMeteor[i].cords[c] = cords[c];
     };
-    
+
     smallMeteor[i].rotation = GetRandomValue(-1000, 1000);
   };
 }
@@ -95,19 +95,34 @@ void UpdateGame() {
   } else if (ship.position.x > windowWidth) {
     ship.position.x = 0;
   }
+
   if (ship.position.y < 0) {
     ship.position.y = windowHeight;
   } else if (ship.position.y > windowHeight) {
     ship.position.y = 0;
   }
 
-  //Moving meteors to random direction
-  for(int i = 0; i < MAX_SMALL_METEORS; i++){
+  // Meteors mechanics
+  for (int i = 0; i < MAX_SMALL_METEORS; i++) {
+    // Moving meteors into random direction
     smallMeteor[i].speed.x = sin(smallMeteor[i].rotation * (2 * 3.14));
     smallMeteor[i].speed.y = cos(smallMeteor[i].rotation * (2 * 3.14));
 
     smallMeteor[i].position.x += (smallMeteor[i].speed.x * 1);
     smallMeteor[i].position.y -= (smallMeteor[i].speed.y * 1);
+
+    // Meteor wall mechanic
+    if (smallMeteor[i].position.x < 0) {
+      smallMeteor[i].position.x = windowWidth;
+    } else if (smallMeteor[i].position.x > windowWidth) {
+      smallMeteor[i].position.x = 0;
+    }
+
+    if (smallMeteor[i].position.y < 0) {
+      smallMeteor[i].position.y = windowHeight;
+    } else if (smallMeteor[i].position.y > windowHeight) {
+      smallMeteor[i].position.y = 0;
+    }
   }
 }
 
@@ -172,8 +187,8 @@ void DrawGame() {
       meteorLines[l].x = smallMeteor[m].position.x + smallMeteor[m].cords[l].x;
       meteorLines[l].y = smallMeteor[m].position.y + smallMeteor[m].cords[l].y;
     }
-  
-    DrawLineStrip(meteorLines,9, WHITE);
+
+    DrawLineStrip(meteorLines, 9, WHITE);
   }
 
   EndDrawing();
