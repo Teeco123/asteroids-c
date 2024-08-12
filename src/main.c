@@ -39,9 +39,12 @@ static Meteor smallMeteor[MAX_SMALL_METEORS] = {0};
 const int windowWidth = 1280;
 const int windowHeight = 720;
 
+int frameCounter = 0;
 bool gameOver = false;
 
 void StartGame() {
+  frameCounter = 0;
+
   /*
    *
    * STARTING VALUES OF SHIP
@@ -145,6 +148,8 @@ void StartGame() {
 
 void UpdateGame() {
   if (!gameOver) {
+    frameCounter++;
+
     /*
      *
      * UPDATING SHIP
@@ -310,8 +315,19 @@ void DrawGame() {
     for (int sM = 0; sM < MAX_SMALL_METEORS; sM++) {
       DrawLineStrip(smallMeteor[sM].lines, 9, WHITE);
     }
+
+    DrawText(TextFormat("Score: %0.2f", (float)frameCounter / 160), 10, 10, 15,
+             WHITE);
+
   } else {
-    DrawText("PRESS ENTER TO START NEW GAME!", 470, windowHeight / 2, 20, RED);
+    DrawText("PRESS ENTER TO START NEW GAME!",
+             windowWidth / 2 -
+                 MeasureText("PRESS ENTER TO START NEW GAME!", 20) / 2,
+             windowHeight / 2, 20, RED);
+
+    DrawText(TextFormat("Your score was: %0.2f", (float)frameCounter / 160),
+             windowWidth / 2 - MeasureText("Your score was: %0.2f", 20) / 2,
+             windowHeight / 2 - 40, 20, RED);
   }
   EndDrawing();
 }
