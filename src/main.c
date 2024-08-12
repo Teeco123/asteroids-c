@@ -8,6 +8,8 @@
 
 typedef struct Ship {
   Vector2 position;
+  Vector2 cords[7];
+  Vector2 lines[7];
   Vector2 speed;
   int rotation;
   float acceleration;
@@ -31,13 +33,46 @@ const int windowWidth = 1280;
 const int windowHeight = 720;
 
 void StartGame() {
-  // Starting Values of ship
+  /*
+   *
+   * STARTING VALUES OF SHIP
+   *
+   */
   ship.position = (Vector2){windowWidth / 2, windowHeight / 2};
   ship.speed = (Vector2){0, 0};
   ship.rotation = 0;
   ship.acceleration = 0;
 
-  // Starting values of small meteor
+  Vector2 shipCords[] = {{0, -25},  {20, 20},  {10, 10},
+                         {-10, 10}, {-20, 20}, {0, -25}};
+
+  for (int sC = 0; sC < sizeof(shipCords) / sizeof(shipCords[0]); sC++) {
+    ship.cords[sC] = shipCords[sC];
+  }
+
+  Vector2 shipLines[] = {{0}, {0}, {0}, {0}, {0}, {0}};
+
+  for (int sL = 0; sL < sizeof(shipLines) / sizeof(shipLines[0]); sL++) {
+    ship.lines[sL].x =
+        ((ship.position.x + ship.cords[sL].x) - ship.position.x) *
+            cos(ship.rotation * twoPI) -
+        ((ship.position.y + ship.cords[sL].y) - ship.position.y) *
+            sin(ship.rotation * twoPI) +
+        ship.position.x;
+
+    ship.lines[sL].y =
+        ((ship.position.x + ship.cords[sL].x) - ship.position.x) *
+            sin(ship.rotation * twoPI) +
+        ((ship.position.y + ship.cords[sL].y) - ship.position.y) *
+            cos(ship.rotation * twoPI) +
+        ship.position.y;
+  }
+
+  /*
+   *
+   * STARTING VALUES OF SMALL METEOR
+   *
+   */
   for (int sM = 0; sM < MAX_SMALL_METEORS; sM++) {
     smallMeteor[sM].position.x = GetRandomValue(0, windowWidth);
     smallMeteor[sM].position.y = GetRandomValue(0, windowHeight);
@@ -73,8 +108,11 @@ void StartGame() {
 }
 
 void UpdateGame() {
-
-  // Ship rotation
+  /*
+   *
+   * UPDATING SHIP
+   *
+   */
   if (IsKeyDown(KEY_RIGHT)) {
     ship.rotation -= 5;
   }
@@ -113,7 +151,27 @@ void UpdateGame() {
     ship.position.y = 0;
   }
 
-  // Meteors mechanics
+  for (int sL = 0; sL < sizeof(ship.lines) / sizeof(ship.lines[0]); sL++) {
+    ship.lines[sL].x =
+        ((ship.position.x + ship.cords[sL].x) - ship.position.x) *
+            cos(ship.rotation * twoPI) -
+        ((ship.position.y + ship.cords[sL].y) - ship.position.y) *
+            sin(ship.rotation * twoPI) +
+        ship.position.x;
+
+    ship.lines[sL].y =
+        ((ship.position.x + ship.cords[sL].x) - ship.position.x) *
+            sin(ship.rotation * twoPI) +
+        ((ship.position.y + ship.cords[sL].y) - ship.position.y) *
+            cos(ship.rotation * twoPI) +
+        ship.position.y;
+  }
+
+  /*
+   *
+   * UPDATING SMALL METEOR
+   *
+   */
   for (int sM = 0; sM < MAX_SMALL_METEORS; sM++) {
     // Moving meteors into random direction
     smallMeteor[sM].speed.x = sin(smallMeteor[sM].rotation * (2 * 3.14));
@@ -156,26 +214,7 @@ void DrawGame() {
   ClearBackground(BLACK);
 
   // Draw ship
-  Vector2 shipCords[] = {{0, -25},  {20, 20},  {10, 10},
-                         {-10, 10}, {-20, 20}, {0, -25}};
-
-  Vector2 shipLines[] = {{0}, {0}, {0}, {0}, {0}, {0}};
-
-  for (int i = 0; i < sizeof(shipLines) / sizeof(shipLines[0]); ++i) {
-    shipLines[i].x = ((ship.position.x + shipCords[i].x) - ship.position.x) *
-                         cos(ship.rotation * twoPI) -
-                     ((ship.position.y + shipCords[i].y) - ship.position.y) *
-                         sin(ship.rotation * twoPI) +
-                     ship.position.x;
-
-    shipLines[i].y = ((ship.position.x + shipCords[i].x) - ship.position.x) *
-                         sin(ship.rotation * twoPI) +
-                     ((ship.position.y + shipCords[i].y) - ship.position.y) *
-                         cos(ship.rotation * twoPI) +
-                     ship.position.y;
-  }
-
-  DrawLineStrip(shipLines, 6, WHITE);
+  DrawLineStrip(ship.lines, 6, WHITE);
 
   // Draw Thruster
   if (IsKeyDown(KEY_UP)) {
