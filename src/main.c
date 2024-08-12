@@ -134,26 +134,26 @@ void DrawGame() {
   ClearBackground(BLACK);
 
   // Draw ship
-  Vector2 cords[] = {{0, -25},  {20, 20},  {10, 10},
-                     {-10, 10}, {-20, 20}, {0, -25}};
+  Vector2 shipCords[] = {{0, -25},  {20, 20},  {10, 10},
+                         {-10, 10}, {-20, 20}, {0, -25}};
 
-  Vector2 lines[] = {{0}, {0}, {0}, {0}, {0}, {0}};
+  Vector2 shipLines[] = {{0}, {0}, {0}, {0}, {0}, {0}};
 
-  for (int i = 0; i < sizeof(lines) / sizeof(lines[0]); ++i) {
-    lines[i].x = ((ship.position.x + cords[i].x) - ship.position.x) *
-                     cos(ship.rotation * twoPI) -
-                 ((ship.position.y + cords[i].y) - ship.position.y) *
-                     sin(ship.rotation * twoPI) +
-                 ship.position.x;
+  for (int i = 0; i < sizeof(shipLines) / sizeof(shipLines[0]); ++i) {
+    shipLines[i].x = ((ship.position.x + shipCords[i].x) - ship.position.x) *
+                         cos(ship.rotation * twoPI) -
+                     ((ship.position.y + shipCords[i].y) - ship.position.y) *
+                         sin(ship.rotation * twoPI) +
+                     ship.position.x;
 
-    lines[i].y = ((ship.position.x + cords[i].x) - ship.position.x) *
-                     sin(ship.rotation * twoPI) +
-                 ((ship.position.y + cords[i].y) - ship.position.y) *
-                     cos(ship.rotation * twoPI) +
-                 ship.position.y;
+    shipLines[i].y = ((ship.position.x + shipCords[i].x) - ship.position.x) *
+                         sin(ship.rotation * twoPI) +
+                     ((ship.position.y + shipCords[i].y) - ship.position.y) *
+                         cos(ship.rotation * twoPI) +
+                     ship.position.y;
   }
 
-  DrawLineStrip(lines, 6, WHITE);
+  DrawLineStrip(shipLines, 6, WHITE);
 
   // Draw Thruster
   if (IsKeyDown(KEY_UP)) {
@@ -180,15 +180,18 @@ void DrawGame() {
 
   // Drawing Meteors
   for (int m = 0; m < MAX_SMALL_METEORS; m++) {
-    Vector2 meteorLines[] = {{0}, {0}, {0}, {0}, {0}, {0}, {0}, {0}, {0}};
+    Vector2 smallMeteorLines[] = {{0}, {0}, {0}, {0}, {0}, {0}, {0}, {0}, {0}};
 
-    for (int l = 0; l < sizeof(meteorLines) / sizeof(meteorLines[0]); l++) {
+    for (int l = 0; l < sizeof(smallMeteorLines) / sizeof(smallMeteorLines[0]);
+         l++) {
 
-      meteorLines[l].x = smallMeteor[m].position.x + smallMeteor[m].cords[l].x;
-      meteorLines[l].y = smallMeteor[m].position.y + smallMeteor[m].cords[l].y;
+      smallMeteorLines[l].x =
+          smallMeteor[m].position.x + smallMeteor[m].cords[l].x;
+      smallMeteorLines[l].y =
+          smallMeteor[m].position.y + smallMeteor[m].cords[l].y;
     }
 
-    DrawLineStrip(meteorLines, 9, WHITE);
+    DrawLineStrip(smallMeteorLines, 9, WHITE);
   }
 
   EndDrawing();
