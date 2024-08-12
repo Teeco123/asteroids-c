@@ -8,12 +8,17 @@
 
 typedef struct Ship {
   Vector2 position;
-  Vector2 cords[7];
-  Vector2 lines[7];
+  Vector2 cords[6];
+  Vector2 lines[6];
   Vector2 speed;
   int rotation;
   float acceleration;
 } Ship;
+
+typedef struct Jet {
+  Vector2 cords[3];
+  Vector2 lines[3];
+} Jet;
 
 typedef struct Meteor {
   Vector2 position;
@@ -26,6 +31,7 @@ typedef struct Meteor {
 const float twoPI = (2 * 3.14);
 
 static Ship ship = {0};
+static Jet jet = {0};
 static Meteor smallMeteor[MAX_SMALL_METEORS] = {0};
 
 // Screen size
@@ -67,6 +73,33 @@ void StartGame() {
             cos(ship.rotation * twoPI) +
         ship.position.y;
   }
+
+  /*
+   *
+   * STARTING VALUES OF JET
+   *
+   */
+  Vector2 jetCords[] = {{10, 10}, {0, 30}, {-10, 10}};
+
+  for (int jC = 0; jC < sizeof(jetCords) / sizeof(jetCords[0]); jC++) {
+    jet.cords[jC] = jetCords[jC];
+  }
+
+  Vector2 jetLines[] = {{0}, {0}, {0}};
+
+  for (int jL = 0; jL < sizeof(jetLines) / sizeof(jetLines[0]); jL++) {
+    jet.lines[jL].x = ((ship.position.x + jet.cords[jL].x) - ship.position.x) *
+                          cos(ship.rotation * twoPI) -
+                      ((ship.position.y + jet.cords[jL].y) - ship.position.y) *
+                          sin(ship.rotation * twoPI) +
+                      ship.position.x;
+
+    jet.lines[jL].y = ((ship.position.x + jet.lines[jL].x) - ship.position.x) *
+                          sin(ship.rotation * twoPI) +
+                      ((ship.position.y + jet.lines[jL].y) - ship.position.y) *
+                          cos(ship.rotation * twoPI) +
+                      ship.position.y;
+  };
 
   /*
    *
@@ -169,6 +202,25 @@ void UpdateGame() {
 
   /*
    *
+   * UPDATING JET
+   *
+   */
+  for (int jL = 0; jL < sizeof(jet.lines) / sizeof(jet.lines[0]); jL++) {
+    jet.lines[jL].x = ((ship.position.x + jet.cords[jL].x) - ship.position.x) *
+                          cos(ship.rotation * twoPI) -
+                      ((ship.position.y + jet.cords[jL].y) - ship.position.y) *
+                          sin(ship.rotation * twoPI) +
+                      ship.position.x;
+
+    jet.lines[jL].y = ((ship.position.x + jet.cords[jL].x) - ship.position.x) *
+                          sin(ship.rotation * twoPI) +
+                      ((ship.position.y + jet.cords[jL].y) - ship.position.y) *
+                          cos(ship.rotation * twoPI) +
+                      ship.position.y;
+  };
+
+  /*
+   *
    * UPDATING SMALL METEOR
    *
    */
@@ -216,27 +268,9 @@ void DrawGame() {
   // Draw ship
   DrawLineStrip(ship.lines, 6, WHITE);
 
-  // Draw Thruster
+  // Draw Jet
   if (IsKeyDown(KEY_UP)) {
-    Vector2 jetCords[] = {{10, 10}, {0, 30}, {-10, 10}};
-
-    Vector2 jetLines[] = {{0}, {0}, {0}};
-
-    for (int i = 0; i < sizeof(jetLines) / sizeof(jetLines[0]); ++i) {
-      jetLines[i].x = ((ship.position.x + jetCords[i].x) - ship.position.x) *
-                          cos(ship.rotation * twoPI) -
-                      ((ship.position.y + jetCords[i].y) - ship.position.y) *
-                          sin(ship.rotation * twoPI) +
-                      ship.position.x;
-
-      jetLines[i].y = ((ship.position.x + jetCords[i].x) - ship.position.x) *
-                          sin(ship.rotation * twoPI) +
-                      ((ship.position.y + jetCords[i].y) - ship.position.y) *
-                          cos(ship.rotation * twoPI) +
-                      ship.position.y;
-    };
-
-    DrawLineStrip(jetLines, 3, WHITE);
+    DrawLineStrip(jet.lines, 3, WHITE);
   }
 
   // Drawing Meteors
