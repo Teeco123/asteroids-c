@@ -16,6 +16,7 @@ typedef struct Ship {
 typedef struct Meteor {
   Vector2 position;
   Vector2 cords[9];
+  Vector2 lines[9];
   Vector2 speed;
   int rotation;
 } Meteor;
@@ -36,10 +37,10 @@ void StartGame() {
   ship.rotation = 0;
   ship.acceleration = 0;
 
-  // Randomizing position and layout of meteors
-  for (int i = 0; i < MAX_SMALL_METEORS; i++) {
-    smallMeteor[i].position.x = GetRandomValue(0, windowWidth);
-    smallMeteor[i].position.y = GetRandomValue(0, windowHeight);
+  // Starting values of small meteor
+  for (int sM = 0; sM < MAX_SMALL_METEORS; sM++) {
+    smallMeteor[sM].position.x = GetRandomValue(0, windowWidth);
+    smallMeteor[sM].position.y = GetRandomValue(0, windowHeight);
 
     Vector2 cords[] = {
         {GetRandomValue(-15, -15), GetRandomValue(15, 15)},
@@ -54,10 +55,20 @@ void StartGame() {
     };
 
     for (int c = 0; c < sizeof(cords) / sizeof(cords[0]); c++) {
-      smallMeteor[i].cords[c] = cords[c];
+      smallMeteor[sM].cords[c] = cords[c];
     };
 
-    smallMeteor[i].rotation = GetRandomValue(-1000, 1000);
+    Vector2 lines[] = {{0}, {0}, {0}, {0}, {0}, {0}, {0}, {0}, {0}};
+
+    for (int l = 0; l < sizeof(lines) / sizeof(lines[0]); l++) {
+
+      smallMeteor[sM].lines[l].x =
+          smallMeteor[sM].position.x + smallMeteor[sM].cords[l].x;
+      smallMeteor[sM].lines[l].y =
+          smallMeteor[sM].position.y + smallMeteor[sM].cords[l].y;
+    }
+
+    smallMeteor[sM].rotation = GetRandomValue(-1000, 1000);
   };
 }
 
@@ -103,25 +114,36 @@ void UpdateGame() {
   }
 
   // Meteors mechanics
-  for (int i = 0; i < MAX_SMALL_METEORS; i++) {
+  for (int sM = 0; sM < MAX_SMALL_METEORS; sM++) {
     // Moving meteors into random direction
-    smallMeteor[i].speed.x = sin(smallMeteor[i].rotation * (2 * 3.14));
-    smallMeteor[i].speed.y = cos(smallMeteor[i].rotation * (2 * 3.14));
+    smallMeteor[sM].speed.x = sin(smallMeteor[sM].rotation * (2 * 3.14));
+    smallMeteor[sM].speed.y = cos(smallMeteor[sM].rotation * (2 * 3.14));
 
-    smallMeteor[i].position.x += (smallMeteor[i].speed.x * 1);
-    smallMeteor[i].position.y -= (smallMeteor[i].speed.y * 1);
+    smallMeteor[sM].position.x += (smallMeteor[sM].speed.x * 1);
+    smallMeteor[sM].position.y -= (smallMeteor[sM].speed.y * 1);
 
-    // Meteor wall mechanic
-    if (smallMeteor[i].position.x < 0) {
-      smallMeteor[i].position.x = windowWidth;
-    } else if (smallMeteor[i].position.x > windowWidth) {
-      smallMeteor[i].position.x = 0;
+    // Calculating meteor lines
+    for (int l = 0;
+         l < sizeof(smallMeteor[sM].lines) / sizeof(smallMeteor[sM].lines[0]);
+         l++) {
+
+      smallMeteor[sM].lines[l].x =
+          smallMeteor[sM].position.x + smallMeteor[sM].cords[l].x;
+      smallMeteor[sM].lines[l].y =
+          smallMeteor[sM].position.y + smallMeteor[sM].cords[l].y;
     }
 
-    if (smallMeteor[i].position.y < 0) {
-      smallMeteor[i].position.y = windowHeight;
-    } else if (smallMeteor[i].position.y > windowHeight) {
-      smallMeteor[i].position.y = 0;
+    // Meteor wall mechanic
+    if (smallMeteor[sM].position.x < 0) {
+      smallMeteor[sM].position.x = windowWidth;
+    } else if (smallMeteor[sM].position.x > windowWidth) {
+      smallMeteor[sM].position.x = 0;
+    }
+
+    if (smallMeteor[sM].position.y < 0) {
+      smallMeteor[sM].position.y = windowHeight;
+    } else if (smallMeteor[sM].position.y > windowHeight) {
+      smallMeteor[sM].position.y = 0;
     }
   }
 }
@@ -179,19 +201,8 @@ void DrawGame() {
   }
 
   // Drawing Meteors
-  for (int m = 0; m < MAX_SMALL_METEORS; m++) {
-    Vector2 smallMeteorLines[] = {{0}, {0}, {0}, {0}, {0}, {0}, {0}, {0}, {0}};
-
-    for (int l = 0; l < sizeof(smallMeteorLines) / sizeof(smallMeteorLines[0]);
-         l++) {
-
-      smallMeteorLines[l].x =
-          smallMeteor[m].position.x + smallMeteor[m].cords[l].x;
-      smallMeteorLines[l].y =
-          smallMeteor[m].position.y + smallMeteor[m].cords[l].y;
-    }
-
-    DrawLineStrip(smallMeteorLines, 9, WHITE);
+  for (int sM = 0; sM < MAX_SMALL_METEORS; sM++) {
+    DrawLineStrip(smallMeteor[sM].lines, 9, WHITE);
   }
 
   EndDrawing();
