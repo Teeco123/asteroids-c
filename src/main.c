@@ -2,7 +2,7 @@
 #include <raylib.h>
 #include <stdio.h>
 
-#define MAX_SMALL_METEORS 20
+#define MAX_SMALL_METEORS 15
 #define MAX_MEDIUM_METEORS 10
 #define MAX_BIG_METEORS 5
 
@@ -34,6 +34,7 @@ const float twoPI = (2 * 3.14);
 static Ship ship = {0};
 static Jet jet = {0};
 static Meteor smallMeteor[MAX_SMALL_METEORS] = {0};
+static Meteor bigMeteor[MAX_BIG_METEORS] = {0};
 
 // Screen size
 const int windowWidth = 1280;
@@ -143,6 +144,44 @@ void StartGame() {
     }
 
     smallMeteor[sM].rotation = GetRandomValue(-1000, 1000);
+  };
+
+  /*
+   *
+   * STARTING VALUES OF BIG METEOR
+   *
+   */
+  for (int bM = 0; bM < MAX_BIG_METEORS; bM++) {
+    bigMeteor[bM].position.x = GetRandomValue(0, windowWidth);
+    bigMeteor[bM].position.y = GetRandomValue(0, windowHeight);
+
+    Vector2 cords[] = {
+        {GetRandomValue(-30, -30), GetRandomValue(30, 30)},
+        {GetRandomValue(0, 0), GetRandomValue(15, 30)},
+        {GetRandomValue(15, 30), GetRandomValue(15, 30)},
+        {GetRandomValue(15, 30), GetRandomValue(0, 0)},
+        {GetRandomValue(15, 30), GetRandomValue(-30, -15)},
+        {GetRandomValue(0, 0), GetRandomValue(-30, -15)},
+        {GetRandomValue(-30, -15), GetRandomValue(-30, -15)},
+        {GetRandomValue(-30, -15), GetRandomValue(0, 0)},
+        {GetRandomValue(-30, -30), GetRandomValue(30, 30)},
+    };
+
+    for (int c = 0; c < sizeof(cords) / sizeof(cords[0]); c++) {
+      bigMeteor[bM].cords[c] = cords[c];
+    };
+
+    Vector2 lines[] = {{0}, {0}, {0}, {0}, {0}, {0}, {0}, {0}, {0}};
+
+    for (int l = 0; l < sizeof(lines) / sizeof(lines[0]); l++) {
+
+      bigMeteor[bM].lines[l].x =
+          bigMeteor[bM].position.x + bigMeteor[bM].cords[l].x;
+      bigMeteor[bM].lines[l].y =
+          bigMeteor[bM].position.y + bigMeteor[bM].cords[l].y;
+    }
+
+    bigMeteor[bM].rotation = GetRandomValue(-1000, 1000);
   };
 }
 
@@ -287,6 +326,63 @@ void UpdateGame() {
         smallMeteor[sM].position.y = 0;
       }
     }
+
+    /*
+     *
+     * UPDATING BIG METEOR
+     *
+     */
+    for (int bM = 0; bM < MAX_BIG_METEORS; bM++) {
+      // Moving meteors into random direction
+      bigMeteor[bM].speed.x = sin(bigMeteor[bM].rotation * twoPI);
+      bigMeteor[bM].speed.y = cos(bigMeteor[bM].rotation * twoPI);
+
+      bigMeteor[bM].position.x += bigMeteor[bM].speed.x;
+      bigMeteor[bM].position.y -= bigMeteor[bM].speed.y;
+
+      // Update the meteor lines
+      for (int l = 0; l < 9; l++) {
+        bigMeteor[bM].lines[l].x =
+            bigMeteor[bM].position.x + bigMeteor[bM].cords[l].x;
+        bigMeteor[bM].lines[l].y =
+            bigMeteor[bM].position.y + bigMeteor[bM].cords[l].y;
+      }
+
+      // Collision detection
+      for (int l = 0;
+           l < sizeof(bigMeteor[bM].lines) / sizeof(bigMeteor[bM].lines[0]);
+           l++) {
+        for (int sL = 0; sL < sizeof(ship.lines) / sizeof(ship.lines[0]);
+             sL++) {
+          if (CheckCollisionLines(
+                  bigMeteor[bM].lines[l],
+                  bigMeteor[bM].lines[(l + 1) % sizeof(bigMeteor[bM].lines) /
+                                      sizeof(bigMeteor[bM].lines[0])],
+                  ship.lines[sL],
+                  ship.lines[(sL + 1) % sizeof(ship.lines) /
+                             sizeof(ship.lines[0])],
+                  &ship.collisionPoint)) {
+            gameOver = true;
+            break;
+          }
+        }
+        if (gameOver)
+          break;
+      }
+
+      // Meteor wall mechanic
+      if (bigMeteor[bM].position.x < 0) {
+        bigMeteor[bM].position.x = windowWidth;
+      } else if (bigMeteor[bM].position.x > windowWidth) {
+        bigMeteor[bM].position.x = 0;
+      }
+
+      if (bigMeteor[bM].position.y < 0) {
+        bigMeteor[bM].position.y = windowHeight;
+      } else if (bigMeteor[bM].position.y > windowHeight) {
+        bigMeteor[bM].position.y = 0;
+      }
+    }
   } else {
     if (IsKeyPressed(KEY_ENTER)) {
       StartGame();
@@ -314,6 +410,10 @@ void DrawGame() {
     // Drawing Meteors
     for (int sM = 0; sM < MAX_SMALL_METEORS; sM++) {
       DrawLineStrip(smallMeteor[sM].lines, 9, WHITE);
+    }
+
+    for (int bM = 0; bM < MAX_BIG_METEORS; bM++) {
+      DrawLineStrip(bigMeteor[bM].lines, 9, WHITE);
     }
 
     DrawText(TextFormat("Score: %0.2f", (float)frameCounter / 160), 10, 10, 15,
