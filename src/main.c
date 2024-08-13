@@ -337,8 +337,8 @@ void UpdateGame() {
       bigMeteor[bM].speed.x = sin(bigMeteor[bM].rotation * twoPI);
       bigMeteor[bM].speed.y = cos(bigMeteor[bM].rotation * twoPI);
 
-      bigMeteor[bM].position.x += bigMeteor[bM].speed.x;
-      bigMeteor[bM].position.y -= bigMeteor[bM].speed.y;
+      bigMeteor[bM].position.x += bigMeteor[bM].speed.x * 0.8;
+      bigMeteor[bM].position.y -= bigMeteor[bM].speed.y * 0.8;
 
       // Update the meteor lines
       for (int l = 0; l < 9; l++) {
