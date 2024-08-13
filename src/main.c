@@ -29,12 +29,19 @@ typedef struct Meteor {
   int rotation;
 } Meteor;
 
+typedef struct Sounds {
+  Sound jet;
+  Sound explode;
+  Sound bloop;
+} Sounds;
+
 const float twoPI = (2 * 3.14);
 
 static Ship ship = {0};
 static Jet jet = {0};
 static Meteor smallMeteor[MAX_SMALL_METEORS] = {0};
 static Meteor bigMeteor[MAX_BIG_METEORS] = {0};
+static Sounds sound = {0};
 
 // Screen size
 const int windowWidth = 1280;
@@ -45,6 +52,16 @@ bool gameOver = false;
 
 void StartGame() {
   frameCounter = 0;
+
+  /*
+   *
+   * LOADING SOUNDS
+   *
+   */
+  sound.jet = LoadSound("sounds/jet.wav");
+  sound.explode = LoadSound("sounds/explode.wav");
+  SetSoundVolume(sound.explode, 0.4);
+  sound.bloop = LoadSound("sounds/bloop.wav");
 
   /*
    *
@@ -207,8 +224,12 @@ void UpdateGame() {
 
     // Ship acceleration
     if (IsKeyDown(KEY_UP)) {
-      if (ship.acceleration < 10)
+      if (ship.acceleration < 10) {
         ship.acceleration += 0.02f;
+      }
+      if (frameCounter % 6 == 0) {
+        PlaySound(sound.jet);
+      }
     } else if (ship.acceleration > 0 && !IsKeyDown(KEY_UP)) {
       ship.acceleration -= 0.01f;
     } else if (ship.acceleration < 0) {
@@ -305,6 +326,7 @@ void UpdateGame() {
                   ship.lines[(sL + 1) % sizeof(ship.lines) /
                              sizeof(ship.lines[0])],
                   &ship.collisionPoint)) {
+            PlaySound(sound.explode);
             gameOver = true;
             break;
           }
@@ -362,6 +384,7 @@ void UpdateGame() {
                   ship.lines[(sL + 1) % sizeof(ship.lines) /
                              sizeof(ship.lines[0])],
                   &ship.collisionPoint)) {
+            PlaySound(sound.explode);
             gameOver = true;
             break;
           }
@@ -385,6 +408,7 @@ void UpdateGame() {
     }
   } else {
     if (IsKeyPressed(KEY_ENTER)) {
+      PlaySound(sound.bloop);
       StartGame();
       gameOver = false;
     }
@@ -434,6 +458,8 @@ void DrawGame() {
 
 int main() {
   InitWindow(windowWidth, windowHeight, "Asteroids");
+  InitAudioDevice();
+
   SetTargetFPS(160);
 
   StartGame();
