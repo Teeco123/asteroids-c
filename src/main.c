@@ -427,7 +427,7 @@ void DrawGame() {
     DrawLineStrip(ship.lines, 6, WHITE);
 
     // Draw Jet
-    if (IsKeyDown(KEY_UP)) {
+    if (IsKeyDown(KEY_UP) && frameCounter % 10 == 0) {
       DrawLineStrip(jet.lines, 3, WHITE);
     }
 
