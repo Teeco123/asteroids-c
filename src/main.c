@@ -48,7 +48,7 @@ const int windowWidth = 1280;
 const int windowHeight = 720;
 
 int frameCounter = 0;
-bool gameOver = false;
+bool gameOver = true;
 
 void StartGame() {
   frameCounter = 0;
