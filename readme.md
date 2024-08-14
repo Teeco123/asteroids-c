@@ -15,7 +15,7 @@ Clone the project
 
 Go to the project director
 ```bash
-  cd my-project
+  cd asteroids-c
 ```
 
 Create build directory
