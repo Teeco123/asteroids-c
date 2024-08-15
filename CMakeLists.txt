@@ -12,3 +12,11 @@ file(GLOB cSource src/*.c)
 add_executable(Asteroids ${cSource})
 target_link_libraries(Asteroids PRIVATE raylib m)
 target_include_directories(Asteroids PRIVATE include/)
+
+add_custom_command(
+  TARGET Asteroids POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+                ${CMAKE_SOURCE_DIR}/sounds/
+                ${CMAKE_CURRENT_BINARY_DIR}/sounds/)
+
+
